@@ -1,36 +1,19 @@
-import AppLayout from "@/components/layouts/app-layout/app-layout";
-import Spacer from "@/components/spacer/spacer";
-import { student_edit_schema } from "@/lib/validations";
-import {
-  Box,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  Text,
-} from "@chakra-ui/react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/router";
-import React, { ReactElement } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-// import students from "@/data/students.json";
-import PrimaryButton from "@/components/primary-button/primary-button";
+import AppLayout from '@/components/layouts/app-layout/app-layout'
+import PrimaryButton from '@/components/primary-button/primary-button';
+import Spacer from '@/components/spacer/spacer';
+import { student_add_schema} from '@/lib/validations';
+import { Flex, FormControl, FormLabel, FormErrorMessage,Text,Input } from '@chakra-ui/react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import React, { ReactElement } from 'react'
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-const EditStudentPage = () => {
-  const router = useRouter();
-  const studentId = router.query["studentId"];
-
-  console.log({ studentId }, "studentId");
-
+const AddStudentPage = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-    // getValues,
-    setValue,
-  } = useForm<z.infer<typeof student_edit_schema>>({
+  } = useForm<z.infer<typeof student_add_schema>>({
     defaultValues: {
       dob: "",
       gpa: undefined,
@@ -38,20 +21,20 @@ const EditStudentPage = () => {
       name: "",
       major: "",
     },
-    resolver: zodResolver(student_edit_schema),
+    resolver: zodResolver(student_add_schema),
   });
 
-  // const formValues = getValues();
 
-  const onSubmit = async (values: z.infer<typeof student_edit_schema>) => {
-    console.log({ values },"edit student");
+  const onSubmit = async (values: z.infer<typeof student_add_schema>) => {
+    console.log({ values },"add new student");
   };
 
   return (
-    <section className=" w-full min-h-screen bg-white p-6">
-      <Text className="text-lg">Edit Student Details</Text>
-      <Spacer size={6} />
-      <Box className="w-full" as={"form"} onSubmit={handleSubmit(onSubmit)}>
+    <section className=" w-full min-h-screen bg-white p-6 rounded-lg">
+      <Text className="text-2xl">New Student </Text>
+      <Spacer size={12} />
+
+      <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
         <Flex className="flex flex-col gap-3">
           <FormControl isInvalid={!!errors.name?.message}>
             <FormLabel htmlFor="name">Full&nbsp;Name</FormLabel>
@@ -83,15 +66,8 @@ const EditStudentPage = () => {
               id="gpa"
               placeholder="gpa"
               // className="border-primary-blue-50"
+              // type="number"
               {...register("gpa")}
-              type="number"
-              minLength={1}
-              step={"0.01"}
-              max={5}
-              onChange={(event) => {
-                const value = event?.currentTarget?.value;
-                setValue("gpa", parseFloat(value));
-              }}
             />
             <FormErrorMessage>
               {errors.gpa && errors.gpa.message}
@@ -111,11 +87,12 @@ const EditStudentPage = () => {
               {errors.registrationNumber && errors.registrationNumber.message}
             </FormErrorMessage>
           </FormControl>
-
           <FormControl isInvalid={!!errors.dob?.message}>
-            <FormLabel htmlFor="dob">Date&nbsp;Of&nbsp;Birth</FormLabel>
+            <FormLabel htmlFor="dob">
+              Date&nbsp;Of&nbsp;Birth
+            </FormLabel>
             <Input
-              type="date"
+            type='date'
               placeholder="Date Of Birth"
               // className="border-primary-blue-50"
               {...register("dob")}
@@ -129,13 +106,14 @@ const EditStudentPage = () => {
             <PrimaryButton type="submit">Save</PrimaryButton>
           </Flex>
         </Flex>
-      </Box>
+      </form>
     </section>
-  );
-};
+  )
+}
 
-EditStudentPage.getLayout = (page: ReactElement) => {
-  return <AppLayout pageName="Edit Student">{page}</AppLayout>;
-};
+AddStudentPage.getLayout = (page:ReactElement) => {
+  return <AppLayout pageName='Add New Student'>{page}</AppLayout>
+}
 
-export default EditStudentPage;
+
+export default AddStudentPage;

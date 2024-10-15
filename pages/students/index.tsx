@@ -25,7 +25,7 @@ const StudentPage = (...props: unknown[]) => {
       >
         <Spacer axis="horizontal" />
         <PrimaryButton variant="grey" className="px-4 py-2 gap-2 rounded-xl"         onClick={() => {
-                router.push(`/students/new`);
+                router.push(`/students/new/`);
               }}>
           <span>Add&nbsp;Student</span>
           <PlusIcon />
