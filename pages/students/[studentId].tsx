@@ -7,7 +7,11 @@ import Spacer from "@/components/spacer/spacer";
 import {
   Box,
   Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
   Grid,
+  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -24,6 +28,9 @@ import students from "@/data/students.json";
 import { useRouter } from "next/router";
 import { generateRandomNumber } from "@/lib/utils";
 import { Student } from "@/lib/types";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { student_edit_schema } from "@/lib/validations";
 
 const randomNum = generateRandomNumber(1, 10);
 
@@ -49,8 +56,6 @@ const DummyDocument = ({
 };
 
 const StudentDetailsPage = () => {
-  const [studentEditDetails, setStudentEditDetails] =
-    useState<Partial<Student> | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const router = useRouter();
@@ -66,27 +71,100 @@ const StudentDetailsPage = () => {
 
   console.log({ student }, "Studentg");
 
-  const handleOpenEditModal = (student_details: Student) => {
-    setStudentEditDetails(student_details);
+  const {
+    control,
+    register,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+    setValue,
+  } = useForm<z.infer<typeof student_edit_schema>>({
+    defaultValues: {
+      dob: "",
+      gpa: undefined,
+      gender: "",
+      level: "",
+      firstName: "",
+      lastName: "",
+      registrationNumber: "",
+    },
+  });
+
+  const handleOpenEditModal = (student_details:Student) => {
+    const formValues = getValues();
+
+    for (const key in student_details) {
+      if (key in formValues) {
+        setValue(
+          key as keyof z.infer<typeof student_edit_schema>,
+          student_details[key as keyof Student]
+        );
+      }
+    }
+
     onOpen();
+  };
+
+  const onSubmit = async (values: z.infer<typeof student_edit_schema>) => {
+
   };
 
   return (
     <Fragment>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent as={"form"} onSubmit={handleSubmit(onSubmit)}>
           <ModalHeader>Modal Title</ModalHeader>
           <ModalCloseButton />
-          <ModalBody as={'form'} onSubmit={}>
-
+          <ModalBody className="flex flex-col gap-3">
+            <FormControl isInvalid={!!errors.firstName?.message}>
+              <FormLabel htmlFor="firstName">First&nbsp;Name</FormLabel>
+              <Input
+                id="firstName"
+                placeholder="first name"
+                className="focus:border-primary-blue-100  border border-primary-blue-25"
+                {...register("firstName")}
+              />
+              <FormErrorMessage>
+                {errors.firstName && errors.firstName.message}
+              </FormErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={!!errors.lastName?.message}>
+              <FormLabel htmlFor="lastName">Last&nbsp;Name</FormLabel>
+              <Input
+                id="lastName"
+                placeholder="last name"
+                // className="border-primary-blue-50"
+                {...register("lastName")}
+              />
+              <FormErrorMessage>
+                {errors.lastName && errors.lastName.message}
+              </FormErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={!!errors.gpa?.message}>
+              <FormLabel htmlFor="gpa">GPA</FormLabel>
+              <Input
+                id="gpa"
+                placeholder="gpa"
+                // className="border-primary-blue-50"
+                {...register("gpa")}
+              />
+              <FormErrorMessage>
+                {errors.gpa && errors.gpa.message}
+              </FormErrorMessage>
+            </FormControl>
+ 
           </ModalBody>
 
-          <ModalFooter className=" w-full justify-between items-center gap-4 flex">
-            <PrimaryButton variant="grey" onClick={onClose}>
+          <ModalFooter className=" w-full justify-between items-center gap-4 ModalFooter ">
+            <PrimaryButton
+              variant="grey"
+              onClick={onClose}
+              className=" border-primary-blue-50 border text-primary-blue-100"
+            >
               Close
             </PrimaryButton>
-            <PrimaryButton>Save</PrimaryButton>
+            <PrimaryButton type="submit">Save</PrimaryButton>
           </ModalFooter>
         </ModalContent>
       </Modal>
