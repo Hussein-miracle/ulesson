@@ -7,12 +7,15 @@ import { BellIcon, ChevronLeftIcon } from "@/components/icons";
 
 interface StudentHeaderProps {
   children?: React.ReactNode;
+  pageName?:string
 }
 
-const StudentHeader = ({}: StudentHeaderProps) => {
+const StudentHeader = ({pageName}: StudentHeaderProps) => {
   const appRouter = useRouter();
-  const pathname = "";
-  //console.log({ pathname });
+  // const query = appRouter.query;
+  const pathname = appRouter.pathname;
+  // console.log({ pathname },"PATHNAME");
+  // console.log({ query },"QUERY");
   const pagename = pathname?.split("/")?.at(-1) as string;
 
   const handleBack = () => {
@@ -36,7 +39,7 @@ const StudentHeader = ({}: StudentHeaderProps) => {
               " font-bold text-xl/[26px] tracking-[1%]",
           )}
         >
-          {replaceHyphenWithSpace(pagename)}
+          {pageName ? pageName : replaceHyphenWithSpace(pagename)}
         </h4>
         {pagename?.toLowerCase() === "dashboard" && (
           <h2 className=" text-text-shade-100 text-xl font-bold leading-5 tracking-[1%]">
@@ -61,10 +64,10 @@ const StudentHeader = ({}: StudentHeaderProps) => {
         </div>
         <div className="flex flex-col items-start justify-between gap-2  self-center">
           <h2 className=" text-text-shade-100 text-sm font-bold leading-[18.2px] tracking-[1%]">
-            Mr.J.O Akanbi
+            Mr.Midoriya Aizen
           </h2>
           <h4 className=" text-text-shade-75 text-xs font-normal leading-4 tracking-[1%]">
-            Class: JSS 1A
+            Lecturer
           </h4>
         </div>
       </div>

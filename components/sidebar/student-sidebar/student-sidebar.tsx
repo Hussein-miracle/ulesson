@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import React, { Fragment, ReactNode} from "react";
 import { AppSVGProps, DashboardIcon, UserProfilesIcon } from "../../icons";
+import { useRouter } from "next/router";
 
 
 
@@ -23,7 +24,10 @@ const navigations: {
 ];
 
 const StudentSidebar = () => {
-  const pathname = "";
+  const router = useRouter();
+  const pathname = router.pathname;
+  
+  console.log({pathname})
 
   return (
     <Fragment>
@@ -46,7 +50,7 @@ const StudentSidebar = () => {
                       <Link
                         href={item.href}
                         className={cn(
-                          item.href === pathname
+                          pathname.startsWith(item.href)
                             ? "bg-primary-blue-100 text-neutral-white "
                             : "text-text-shade-75 bg-transparent",
                           "group flex items-center gap-x-1.5 px-6 py-3 text-sm font-semibold leading-6 hover:bg-primary-blue-100 hover:text-neutral-white transition-colors duration-150 ease-in-out rounded-xl",
@@ -55,7 +59,7 @@ const StudentSidebar = () => {
                         <item.icon
                           aria-hidden="true"
                           className={cn(
-                            item.href === pathname
+                            pathname.startsWith(item.href)
                               ? "text-white"
                               : "text-text-shade-75  ",
                             "h-5 w-5 shrink-0 group-hover:text-neutral-white transition-colors duration-150 ease-in-out",
