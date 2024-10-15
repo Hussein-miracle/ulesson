@@ -1,19 +1,22 @@
-""
+("");
 import AppLayout from "@/components/layouts/app-layout/app-layout";
 import { Box, Flex, Wrap } from "@chakra-ui/react";
-import React, { ReactElement, useEffect } from "react";
-import students from "@/data/students.json";
+import React, { ReactElement } from "react";
 import { Student } from "@/lib/types";
 import StudentItem from "@/components/student-item/student-item";
 import PrimaryButton from "@/components/primary-button/primary-button";
 import Spacer from "@/components/spacer/spacer";
 import { PlusIcon, SearchIcon } from "@/components/icons";
 import { useRouter } from "next/router";
+import { useGetStudents } from "@/lib/hooks/api/queries";
 
-const StudentPage = (...props: unknown[]) => {
+const StudentPage = () => {
   const router = useRouter();
-  console.log({ props }, "StudentPage");
-  useEffect(() => {}, []);
+
+  const { data: students = [], 
+    // isLoading: isLoadingStudents 
+  } =
+    useGetStudents();
 
   return (
     <section className=" w-full min-h-screen border-primary-blue-25 bg-white rounded-xl p-6">
@@ -24,9 +27,13 @@ const StudentPage = (...props: unknown[]) => {
         justifyContent={"space-between"}
       >
         <Spacer axis="horizontal" />
-        <PrimaryButton variant="grey" className="px-4 py-2 gap-2 rounded-xl"         onClick={() => {
-                router.push(`/students/new/`);
-              }}>
+        <PrimaryButton
+          variant="grey"
+          className="px-4 py-2 gap-2 rounded-xl"
+          onClick={() => {
+            router.push(`/students/new/`);
+          }}
+        >
           <span>Add&nbsp;Student</span>
           <PlusIcon />
         </PrimaryButton>
@@ -59,7 +66,7 @@ const StudentPage = (...props: unknown[]) => {
       <Spacer size={12} />
 
       <Wrap className="flex-wrap flex" spacing={"24px"}>
-        {students.map((student) => {
+        {students?.map((student) => {
           return <StudentItem student={student as Student} key={student.id} />;
         })}
       </Wrap>
