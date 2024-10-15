@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const student_edit_schema = z.object({
+export const edit_student_schema = z.object({
   name: z.string().min(1, "full name is required"),
   dob: z.string().min(1, "date of birth is required"),
   major: z.string().min(1, "major is required"),
@@ -23,7 +23,8 @@ export const student_edit_schema = z.object({
     .optional(),
   registrationNumber: z.string().min(1, "registration number is required"),
 });
-export const student_add_schema = z.object({
+
+export const add_student_schema = z.object({
   name: z.string().min(1, "full name is required"),
   dob: z.string().min(1, "date of birth is required"),
   major: z.string().min(1, "major is required"),

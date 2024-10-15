@@ -73,7 +73,7 @@ const StudentDetailsPage = () => {
   //   for (const key in student_details) {
   //     if (key in formValues) {
   //       setValue(
-  //         key as keyof z.infer<typeof student_edit_schema>,
+  //         key as keyof z.infer<typeof edit_student_schema>,
   //         student_details[key as keyof Student]
   //       );
   //     }

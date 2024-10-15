@@ -1,7 +1,7 @@
 import AppLayout from '@/components/layouts/app-layout/app-layout'
 import PrimaryButton from '@/components/primary-button/primary-button';
 import Spacer from '@/components/spacer/spacer';
-import { student_add_schema} from '@/lib/validations';
+import { add_student_schema} from '@/lib/validations';
 import { Flex, FormControl, FormLabel, FormErrorMessage,Text,Input } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { ReactElement } from 'react'
@@ -13,7 +13,7 @@ const AddStudentPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<z.infer<typeof student_add_schema>>({
+  } = useForm<z.infer<typeof add_student_schema>>({
     defaultValues: {
       dob: "",
       gpa: undefined,
@@ -21,11 +21,11 @@ const AddStudentPage = () => {
       name: "",
       major: "",
     },
-    resolver: zodResolver(student_add_schema),
+    resolver: zodResolver(add_student_schema),
   });
 
 
-  const onSubmit = async (values: z.infer<typeof student_add_schema>) => {
+  const onSubmit = async (values: z.infer<typeof add_student_schema>) => {
     console.log({ values },"add new student");
   };
 

@@ -1,6 +1,6 @@
 import AppLayout from "@/components/layouts/app-layout/app-layout";
 import Spacer from "@/components/spacer/spacer";
-import { student_edit_schema } from "@/lib/validations";
+import { edit_student_schema } from "@/lib/validations";
 import {
   Box,
   Flex,
@@ -30,7 +30,7 @@ const EditStudentPage = () => {
     formState: { errors },
     // getValues,
     setValue,
-  } = useForm<z.infer<typeof student_edit_schema>>({
+  } = useForm<z.infer<typeof edit_student_schema>>({
     defaultValues: {
       dob: "",
       gpa: undefined,
@@ -38,12 +38,12 @@ const EditStudentPage = () => {
       name: "",
       major: "",
     },
-    resolver: zodResolver(student_edit_schema),
+    resolver: zodResolver(edit_student_schema),
   });
 
   // const formValues = getValues();
 
-  const onSubmit = async (values: z.infer<typeof student_edit_schema>) => {
+  const onSubmit = async (values: z.infer<typeof edit_student_schema>) => {
     console.log({ values },"edit student");
   };
 
