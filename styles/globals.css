@@ -2,26 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@media screen and (prefers-reduced-motion: no-preference) {
+  html,
+  body,
+  * {
+    scroll-behavior: smooth;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* .capsizedText {
+  text-box-edge: cap alphabetic;
+  text-box-trim: both;
+} */
+
+.custom-scroller {
+  --scrollbar-color-thumb: #dae6ff;
+  --scrollbar-color-track: #f7f9fd;
+  --scrollbar-width: thin;
+  --scrollbar-width-legacy: 4px;
+}
+
+/* Modern browsers with `scrollbar-*` support */
+
+/* @supports (scrollbar-width: auto) {
+  .custom-scroller {
+    scrollbar-color: var(--scrollbar-color-thumb) var(--scrollbar-color-track);
+    scrollbar-width: var(--scrollbar-width);
+    scrollbar-arrow-color: transparent;
+  }
+
+  .custom-scroller::-webkit-scrollbar-thumb {
+    border-radius: 1000px;
+  }
+  .custom-scroller::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+  .custom-scroller::-webkit-scrollbar-track {
+    border-radius: 1000px;
+  }
+  .custom-scroller::-webkit-scrollbar {
+    border-radius: 1000px;
+  }
+} */
+
+/* Legacy browsers with `::-webkit-scrollbar-*` support */
+@supports selector(::-webkit-scrollbar) {
+  .custom-scroller::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-color-thumb);
+    border-radius: 1000px;
+  }
+  .custom-scroller::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+  .custom-scroller::-webkit-scrollbar-track {
+    background: var(--scrollbar-color-track);
+    border-radius: 1000px;
+    width: var(--scrollbar-width-legacy);
+    height: var(--scrollbar-width-legacy);
+  }
+  .custom-scroller::-webkit-scrollbar {
+    border-radius: 1000px;
+    max-width: var(--scrollbar-width-legacy);
+    max-height: var(--scrollbar-width-legacy);
   }
 }
