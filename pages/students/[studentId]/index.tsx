@@ -1,17 +1,18 @@
 "use client";
 
-import { DownloadIcon, EditIcon, FileIcon } from "@/components/icons";
+import {
+  DownloadIcon,
+  EditIcon,
+  FileIcon,
+  TrashIcon,
+} from "@/components/icons";
 import AppLayout from "@/components/layouts/app-layout/app-layout";
 import PrimaryButton from "@/components/primary-button/primary-button";
 import Spacer from "@/components/spacer/spacer";
 import {
   Box,
   Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
   Grid,
-  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -27,11 +28,6 @@ import Image from "next/image";
 import students from "@/data/students.json";
 import { useRouter } from "next/router";
 import { Student } from "@/lib/types";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { student_edit_schema } from "@/lib/validations";
-import { zodResolver } from "@hookform/resolvers/zod";
-
 
 const DummyDocument = ({
   file_name = "Name.pdf",
@@ -55,10 +51,14 @@ const DummyDocument = ({
 };
 
 const StudentDetailsPage = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenDeleteModal,
+    onOpen: onOpenDeleteModal,
+    onClose: onCloseDeleteModal,
+  } = useDisclosure();
 
   const router = useRouter();
-  const studentId = router.query['studentId'];
+  const studentId = router.query["studentId"];
 
 
   const student = useMemo(() => {
@@ -69,114 +69,54 @@ const StudentDetailsPage = () => {
 
 
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    getValues,
-    setValue,
-  } = useForm<z.infer<typeof student_edit_schema>>({
-    defaultValues: {
-      dob: "",
-      gpa: undefined,
-      registrationNumber: "",
-      name:"",
-      major:"",
-    },
-    resolver: zodResolver(student_edit_schema),
-  });
+  // const handleOpenEditModal = (student_details: Student) => {
+  //   for (const key in student_details) {
+  //     if (key in formValues) {
+  //       setValue(
+  //         key as keyof z.infer<typeof student_edit_schema>,
+  //         student_details[key as keyof Student]
+  //       );
+  //     }
+  //   }
 
-  const formValues = getValues();
+  //   onOpen();
+  // };
 
-  const handleOpenEditModal = (student_details: Student) => {
-    for (const key in student_details) {
-      if (key in formValues) {
-        setValue(
-          key as keyof z.infer<typeof student_edit_schema>,
-          student_details[key as keyof Student]
-        );
-      }
+
+
+  const handleDeleteStudent = async () => {
+    if(!student){
+      return;
     }
 
-    onOpen();
-  };
-
-  const onSubmit = async (values: z.infer<typeof student_edit_schema>) => {
-    console.log({values});
+    router.push("/students");
   };
 
   return (
     <Fragment>
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpenDeleteModal} onClose={onCloseDeleteModal}>
         <ModalOverlay />
-        <ModalContent as={"form"} onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>Modal Title</ModalHeader>
+        <ModalContent>
+          <ModalHeader>Delete&nbsp;Student</ModalHeader>
           <ModalCloseButton />
-          <ModalBody className="flex flex-col gap-3">
-            <FormControl isInvalid={!!errors.name?.message}>
-              <FormLabel htmlFor="name">Full&nbsp;Name</FormLabel>
-              <Input
-                id="name"
-                placeholder="full name"
-                className="focus:border-primary-blue-100  border border-primary-blue-25"
-                {...register("name")}
-              />
-              <FormErrorMessage>
-                {errors.name && errors.name.message}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={!!errors.major?.message}>
-              <FormLabel htmlFor="major">Major</FormLabel>
-              <Input
-                id="major"
-                placeholder="major"
-                className="focus:border-primary-blue-100  border border-primary-blue-25"
-                {...register("major")}
-              />
-              <FormErrorMessage>
-                {errors.major && errors.major.message}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={!!errors.gpa?.message}>
-              <FormLabel htmlFor="gpa">GPA</FormLabel>
-              <Input
-                id="gpa"
-                placeholder="gpa"
-                // className="border-primary-blue-50"
-                value={formValues.gpa}
-                onChange={(event)=>{
-                  const value = event?.currentTarget?.value;
-
-                  setValue("gpa", parseFloat(value));
-                }}
-              />
-              <FormErrorMessage>
-                {errors.gpa && errors.gpa.message}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={!!errors.registrationNumber?.message}>
-              <FormLabel htmlFor="registrationNumber">Registration&nbsp;Number</FormLabel>
-              <Input
-                id="registrationNumber"
-                placeholder="registration number"
-                // className="border-primary-blue-50"
-                {...register("registrationNumber")}
-              />
-              <FormErrorMessage>
-                {errors.registrationNumber && errors.registrationNumber.message}
-              </FormErrorMessage>
-            </FormControl>
+          <ModalBody>
+            <Text className=" text-text-shade-50 text-center ">Are you sure you want to delete this student - <Text className=" font-semibold text-text-shade-100 inline">{student?.name}</Text> ?</Text>
           </ModalBody>
 
           <ModalFooter className=" w-full justify-between items-center gap-4 ModalFooter ">
             <PrimaryButton
               variant="grey"
-              onClick={onClose}
+              onClick={onCloseDeleteModal}
               className=" border-primary-blue-50 border text-primary-blue-100"
             >
-              Close
+              Cancel
             </PrimaryButton>
-            <PrimaryButton type="submit">Save</PrimaryButton>
+            <PrimaryButton
+              className=" bg-black text-white hover:text-red-500 hover:scale-105 delay-75 ease-in-out duration-15 "
+              onClick={handleDeleteStudent}
+            >
+              Delete
+            </PrimaryButton>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -189,15 +129,24 @@ const StudentDetailsPage = () => {
           justifyContent={"space-between"}
         >
           <Spacer axis="horizontal" />
-          <PrimaryButton
-            className="px-4 py-2 gap-2 rounded-xl"
-            onClick={() => {
-              handleOpenEditModal(student!);
-            }}
-          >
-            <EditIcon />
-            <span>Edit&nbsp;Student</span>
-          </PrimaryButton>
+          <Flex className=" gap-2 items-center">
+            <PrimaryButton
+              className="bg-accent-red text-white px-4 py-2 gap-2 rounded-xl"
+              onClick={onOpenDeleteModal}
+            >
+              <TrashIcon className=" text-white size-5" />
+              <span>Delete&nbsp;Student</span>
+            </PrimaryButton>
+            <PrimaryButton
+              className="px-4 py-2 gap-2 rounded-xl"
+              onClick={() => {
+                router.push(`/students/${studentId}/edit`);
+              }}
+            >
+              <EditIcon className=" size-5" />
+              <span>Edit&nbsp;Student</span>
+            </PrimaryButton>
+          </Flex>
         </Box>
 
         <Spacer size={12} />
@@ -253,9 +202,7 @@ const StudentDetailsPage = () => {
                   <Text className=" text-text-shade-50 font-normal">
                     Gender
                   </Text>
-                  <Text className=" text-text-shade-75 font-medium">
-                    N/A
-                  </Text>
+                  <Text className=" text-text-shade-75 font-medium">N/A</Text>
                 </Box>
                 <Box className=" grid grid-cols-2 gap-4">
                   <Text className=" text-text-shade-50 font-normal">Level</Text>

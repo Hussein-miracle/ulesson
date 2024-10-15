@@ -8,8 +8,10 @@ import StudentItem from "@/components/student-item/student-item";
 import PrimaryButton from "@/components/primary-button/primary-button";
 import Spacer from "@/components/spacer/spacer";
 import { PlusIcon, SearchIcon } from "@/components/icons";
+import { useRouter } from "next/router";
 
 const StudentPage = (...props: unknown[]) => {
+  const router = useRouter();
   console.log({ props }, "StudentPage");
   useEffect(() => {}, []);
 
@@ -22,7 +24,9 @@ const StudentPage = (...props: unknown[]) => {
         justifyContent={"space-between"}
       >
         <Spacer axis="horizontal" />
-        <PrimaryButton variant="grey" className="px-4 py-2 gap-2 rounded-xl">
+        <PrimaryButton variant="grey" className="px-4 py-2 gap-2 rounded-xl"         onClick={() => {
+                router.push(`/students/new`);
+              }}>
           <span>Add&nbsp;Student</span>
           <PlusIcon />
         </PrimaryButton>
