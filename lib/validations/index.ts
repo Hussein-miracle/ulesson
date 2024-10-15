@@ -1,11 +1,12 @@
 import { z } from "zod";
 
 export const student_edit_schema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  dob: z.string().min(1, "Date of birth is required"),
-  gpa: z.number().min(0).max(4).optional(),
-  gender: z.enum(["male", "female", "other", ""]),
-  level: z.string().min(1, "Level is required"),
-  registrationNumber: z.string().min(1, "Registration number is required"),
+  name: z.string().min(1, "full name is required"),
+  dob: z.string().min(1, "date of birth is required"),
+  major: z.string().min(1, "major is required"),
+  gpa: z
+    .number({ required_error: "gpa is required", message: "gpa is required." })
+    .min(0)
+    .max(4),
+  registrationNumber: z.string().min(1, "registration number is required"),
 });

@@ -22,17 +22,16 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { Fragment, ReactElement, useMemo, useState } from "react";
+import React, { Fragment, ReactElement, useMemo } from "react";
 import Image from "next/image";
 import students from "@/data/students.json";
 import { useRouter } from "next/router";
-import { generateRandomNumber } from "@/lib/utils";
 import { Student } from "@/lib/types";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { student_edit_schema } from "@/lib/validations";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-const randomNum = generateRandomNumber(1, 10);
 
 const DummyDocument = ({
   file_name = "Name.pdf",
@@ -59,20 +58,18 @@ const StudentDetailsPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const router = useRouter();
-  const query = router.query;
+  const studentId = router.query['studentId'];
 
-  console.log({ query });
 
   const student = useMemo(() => {
-    const found = students.find((s) => s.id === query.studentId);
+    const found = students.find((s) => s.id === studentId);
 
     return (found as Student) ?? null;
-  }, [query.studentId]);
+  }, [studentId]);
 
-  console.log({ student }, "Studentg");
+
 
   const {
-    control,
     register,
     handleSubmit,
     formState: { errors },
@@ -82,17 +79,16 @@ const StudentDetailsPage = () => {
     defaultValues: {
       dob: "",
       gpa: undefined,
-      gender: "",
-      level: "",
-      firstName: "",
-      lastName: "",
       registrationNumber: "",
+      name:"",
+      major:"",
     },
+    resolver: zodResolver(student_edit_schema),
   });
 
-  const handleOpenEditModal = (student_details:Student) => {
-    const formValues = getValues();
+  const formValues = getValues();
 
+  const handleOpenEditModal = (student_details: Student) => {
     for (const key in student_details) {
       if (key in formValues) {
         setValue(
@@ -106,7 +102,7 @@ const StudentDetailsPage = () => {
   };
 
   const onSubmit = async (values: z.infer<typeof student_edit_schema>) => {
-
+    console.log({values});
   };
 
   return (
@@ -117,28 +113,28 @@ const StudentDetailsPage = () => {
           <ModalHeader>Modal Title</ModalHeader>
           <ModalCloseButton />
           <ModalBody className="flex flex-col gap-3">
-            <FormControl isInvalid={!!errors.firstName?.message}>
-              <FormLabel htmlFor="firstName">First&nbsp;Name</FormLabel>
+            <FormControl isInvalid={!!errors.name?.message}>
+              <FormLabel htmlFor="name">Full&nbsp;Name</FormLabel>
               <Input
-                id="firstName"
-                placeholder="first name"
+                id="name"
+                placeholder="full name"
                 className="focus:border-primary-blue-100  border border-primary-blue-25"
-                {...register("firstName")}
+                {...register("name")}
               />
               <FormErrorMessage>
-                {errors.firstName && errors.firstName.message}
+                {errors.name && errors.name.message}
               </FormErrorMessage>
             </FormControl>
-            <FormControl isInvalid={!!errors.lastName?.message}>
-              <FormLabel htmlFor="lastName">Last&nbsp;Name</FormLabel>
+            <FormControl isInvalid={!!errors.major?.message}>
+              <FormLabel htmlFor="major">Major</FormLabel>
               <Input
-                id="lastName"
-                placeholder="last name"
-                // className="border-primary-blue-50"
-                {...register("lastName")}
+                id="major"
+                placeholder="major"
+                className="focus:border-primary-blue-100  border border-primary-blue-25"
+                {...register("major")}
               />
               <FormErrorMessage>
-                {errors.lastName && errors.lastName.message}
+                {errors.major && errors.major.message}
               </FormErrorMessage>
             </FormControl>
             <FormControl isInvalid={!!errors.gpa?.message}>
@@ -147,13 +143,29 @@ const StudentDetailsPage = () => {
                 id="gpa"
                 placeholder="gpa"
                 // className="border-primary-blue-50"
-                {...register("gpa")}
+                value={formValues.gpa}
+                onChange={(event)=>{
+                  const value = event?.currentTarget?.value;
+
+                  setValue("gpa", parseFloat(value));
+                }}
               />
               <FormErrorMessage>
                 {errors.gpa && errors.gpa.message}
               </FormErrorMessage>
             </FormControl>
- 
+            <FormControl isInvalid={!!errors.registrationNumber?.message}>
+              <FormLabel htmlFor="registrationNumber">Registration&nbsp;Number</FormLabel>
+              <Input
+                id="registrationNumber"
+                placeholder="registration number"
+                // className="border-primary-blue-50"
+                {...register("registrationNumber")}
+              />
+              <FormErrorMessage>
+                {errors.registrationNumber && errors.registrationNumber.message}
+              </FormErrorMessage>
+            </FormControl>
           </ModalBody>
 
           <ModalFooter className=" w-full justify-between items-center gap-4 ModalFooter ">
@@ -242,13 +254,13 @@ const StudentDetailsPage = () => {
                     Gender
                   </Text>
                   <Text className=" text-text-shade-75 font-medium">
-                    {randomNum >= 5 ? "Male" : "Female"}
+                    N/A
                   </Text>
                 </Box>
                 <Box className=" grid grid-cols-2 gap-4">
                   <Text className=" text-text-shade-50 font-normal">Level</Text>
                   <Text className=" text-text-shade-75 font-medium  capitalize">
-                    {randomNum < 5 ? "100 level" : "200 level"}
+                    N/A
                   </Text>
                 </Box>
                 <Box className=" grid grid-cols-2 gap-4">
