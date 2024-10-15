@@ -78,19 +78,15 @@ const StudentDetailsPage = () => {
         <ModalContent>
           <ModalHeader>Modal Title</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            {/*  */}
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Provident
-            culpa excepturi harum commodi ipsa, quam dolorem voluptatem natus
-            ratione fuga libero soluta alias rem deleniti incidunt placeat
-            magnam exercitationem beatae.
+          <ModalBody as={'form'} onSubmit={}>
+
           </ModalBody>
 
-          <ModalFooter>
+          <ModalFooter className=" w-full justify-between items-center gap-4 flex">
             <PrimaryButton variant="grey" onClick={onClose}>
               Close
             </PrimaryButton>
-            <PrimaryButton>Secondary Action</PrimaryButton>
+            <PrimaryButton>Save</PrimaryButton>
           </ModalFooter>
         </ModalContent>
       </Modal>
