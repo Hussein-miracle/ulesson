@@ -152,6 +152,27 @@ export const UserProfilesIcon = ({ className, ...props }: AppSVGProps) => {
   );
 };
 
+export const MenuIcon = ({ className, ...props }: AppSVGProps) => {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("text-[#333333]", className)}
+      {...props}
+
+    >
+      <path
+        d="M21.6 19.2H2.40002M15 12H2.40002M21.6 4.79999H2.40002"
+        stroke="black"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+};
 export const PlusIcon = ({ className, ...props }: AppSVGProps) => {
   return (
     <svg
