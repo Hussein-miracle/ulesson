@@ -12,23 +12,32 @@ import {
 } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 // import students from "@/data/students.json";
 import PrimaryButton from "@/components/primary-button/primary-button";
+import { useEditStudent } from "@/lib/hooks/api/mutations";
+import { errorToast, sleep, successToast } from "@/lib/utils";
+import { useGetStudentsById } from "@/lib/hooks/api/queries";
+import Spinner from "@/components/spinner/spinner";
 
 const EditStudentPage = () => {
   const router = useRouter();
-  const studentId = router.query["studentId"];
+  const id = router.query["id"] as string;
 
-  console.log({ studentId }, "studentId");
+  // console.log({ id }, "id");
+
+  const { data: student, isLoading: isLoadingStudent } =
+  useGetStudentsById(id);
+  
+  const {mutateAsync:editStudent,isPending:isPendingEditStudent} = useEditStudent();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    // getValues,
+    getValues,
     setValue,
   } = useForm<z.infer<typeof edit_student_schema>>({
     defaultValues: {
@@ -41,10 +50,33 @@ const EditStudentPage = () => {
     resolver: zodResolver(edit_student_schema),
   });
 
+  const formValues = getValues();
+
+  useEffect(() => {
+    if(!!student){
+      for(const key in student){
+        if(key in formValues){
+          setValue(key as keyof typeof formValues, student[key as keyof typeof formValues])
+        }
+      }
+    }
+
+  },[student])
   // const formValues = getValues();
 
   const onSubmit = async (values: z.infer<typeof edit_student_schema>) => {
-    console.log({ values },"edit student");
+    try {
+      const response = await editStudent({student:values,id});
+   //   console.log({response},"edit Student Response");
+      if(response.status){
+        successToast(response?.message as string);
+        await sleep(300)
+        router.push("/students");
+      }
+    } catch (error:any) {
+      console.log("Error editting",error);
+      errorToast(error?.message as string);
+    }
   };
 
   return (
@@ -126,7 +158,9 @@ const EditStudentPage = () => {
           </FormControl>
 
           <Flex className=" w-full justify-between items-center gap-4 ">
-            <PrimaryButton type="submit">Save</PrimaryButton>
+            <PrimaryButton type="submit" disabled={isPendingEditStudent}>
+              {isPendingEditStudent ? <Spinner/> : <span>Save</span>}
+            </PrimaryButton>
           </Flex>
         </Flex>
       </Box>

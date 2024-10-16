@@ -1,5 +1,3 @@
-"use client";
-
 import {
   DownloadIcon,
   EditIcon,
@@ -23,11 +21,14 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { Fragment, ReactElement, useMemo } from "react";
+import React, { Fragment, ReactElement } from "react";
 import Image from "next/image";
-import students from "@/data/students.json";
 import { useRouter } from "next/router";
-import { Student } from "@/lib/types";
+import { useGetStudentsById } from "@/lib/hooks/api/queries";
+import { useDeleteStudent } from "@/lib/hooks/api/mutations";
+import { errorToast } from "@/lib/utils";
+import Spinner from "@/components/spinner/spinner";
+import axiosInstance from "@/lib/services/axiosInstance";
 
 const DummyDocument = ({
   file_name = "Name.pdf",
@@ -50,7 +51,10 @@ const DummyDocument = ({
   );
 };
 
-const StudentDetailsPage = () => {
+const StudentDetailsPage = ({...props}) => {
+
+  //console.log("props",props);
+
   const {
     isOpen: isOpenDeleteModal,
     onOpen: onOpenDeleteModal,
@@ -58,38 +62,33 @@ const StudentDetailsPage = () => {
   } = useDisclosure();
 
   const router = useRouter();
-  const studentId = router.query["studentId"];
+  const id = router.query["id"] as string;
 
+  const { data: student, isLoading: isLoadingStudent } =
+    useGetStudentsById(id);
 
-  const student = useMemo(() => {
-    const found = students.find((s) => s.id === studentId);
+  const { mutateAsync: deleteStudent, isPending: isPendingDeleteStudent } =
+    useDeleteStudent();
 
-    return (found as Student) ?? null;
-  }, [studentId]);
-
-
-
-  // const handleOpenEditModal = (student_details: Student) => {
-  //   for (const key in student_details) {
-  //     if (key in formValues) {
-  //       setValue(
-  //         key as keyof z.infer<typeof edit_student_schema>,
-  //         student_details[key as keyof Student]
-  //       );
-  //     }
-  //   }
-
-  //   onOpen();
-  // };
-
-
+  //console.log({ student, isLoadingStudent }, "SSSS");
 
   const handleDeleteStudent = async () => {
-    if(!student){
+    if (!student) {
+      errorToast("An error occurred");
       return;
     }
 
-    router.push("/students");
+    try {
+      const response = await deleteStudent(id);
+      console.log({ response }, "student delete response client");
+      if (response?.status) {
+        onCloseDeleteModal();
+        router.push("/students");
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.log({ error }, "student delete error");
+    }
   };
 
   return (
@@ -100,7 +99,13 @@ const StudentDetailsPage = () => {
           <ModalHeader>Delete&nbsp;Student</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text className=" text-text-shade-50 text-center ">Are you sure you want to delete this student - <Text className=" font-semibold text-text-shade-100 inline">{student?.name}</Text> ?</Text>
+            <Text className=" text-text-shade-50 text-center ">
+              Are you sure you want to delete this student -{" "}
+              <Text className=" font-semibold text-text-shade-100 inline">
+                {student?.name}
+              </Text>{" "}
+              ?
+            </Text>
           </ModalBody>
 
           <ModalFooter className=" w-full justify-between items-center gap-4 ModalFooter ">
@@ -112,10 +117,11 @@ const StudentDetailsPage = () => {
               Cancel
             </PrimaryButton>
             <PrimaryButton
+              disabled={isPendingDeleteStudent}
               className=" bg-black text-white hover:text-red-500 hover:scale-105 delay-75 ease-in-out duration-15 "
               onClick={handleDeleteStudent}
             >
-              Delete
+              {isPendingDeleteStudent ? <Spinner /> : <span>Delete</span>}
             </PrimaryButton>
           </ModalFooter>
         </ModalContent>
@@ -132,7 +138,10 @@ const StudentDetailsPage = () => {
           <Flex className=" gap-2 items-center">
             <PrimaryButton
               className="bg-accent-red text-white px-4 py-2 gap-2 rounded-xl"
-              onClick={onOpenDeleteModal}
+              onClick={() => {
+                if (!student) return;
+                onOpenDeleteModal();
+              }}
             >
               <TrashIcon className=" text-white size-5" />
               <span>Delete&nbsp;Student</span>
@@ -140,7 +149,7 @@ const StudentDetailsPage = () => {
             <PrimaryButton
               className="px-4 py-2 gap-2 rounded-xl"
               onClick={() => {
-                router.push(`/students/${studentId}/edit`);
+                router.push(`/students/${id}/edit`);
               }}
             >
               <EditIcon className=" size-5" />
@@ -179,7 +188,7 @@ const StudentDetailsPage = () => {
                     ID&nbsp;NO:
                   </Text>
                   <Text className=" text-text-shade-75 font-medium">
-                    {student?.id}
+                    {student?.id ?? "N/A"}
                   </Text>
                 </Box>
                 <Box className=" grid grid-cols-2 gap-4">
@@ -187,7 +196,7 @@ const StudentDetailsPage = () => {
                     FullName
                   </Text>
                   <Text className=" text-text-shade-75 font-medium">
-                    {student?.name}
+                    {student?.name ?? "N/A"}
                   </Text>
                 </Box>
                 <Box className=" grid grid-cols-2 gap-4">
@@ -195,7 +204,7 @@ const StudentDetailsPage = () => {
                     Date&nbsp;Of&nbsp;Birth
                   </Text>
                   <Text className=" text-text-shade-75 font-medium">
-                    {student?.dob}
+                    {student?.dob ?? "N/A"}
                   </Text>
                 </Box>
                 <Box className=" grid grid-cols-2 gap-4">
@@ -215,13 +224,13 @@ const StudentDetailsPage = () => {
                     Registration&nbsp;Number
                   </Text>
                   <Text className=" text-text-shade-75 font-medium  capitalize">
-                    {student?.registrationNumber}
+                    {student?.registrationNumber ?? "N/A"}
                   </Text>
                 </Box>
                 <Box className=" grid grid-cols-2 gap-4">
                   <Text className=" text-text-shade-50 font-normal">GPA</Text>
                   <Text className=" text-text-shade-75 font-medium  capitalize">
-                    {student?.gpa}
+                    {student?.gpa ?? "N/A"}
                   </Text>
                 </Box>
               </Flex>
@@ -267,4 +276,32 @@ StudentDetailsPage.getLayout = (page: ReactElement) => {
   return <AppLayout pageName="Student Details">{page}</AppLayout>;
 };
 
+
+export async function getServerSideProps(context: { params: { id: any; }; }) {
+  const { id } = context.params; // Assuming you're using dynamic routes
+
+  console.log({id},"SETVOERt");
+  
+  try {
+    // Fetch data for a specific student
+    const response = await axiosInstance.get<any,{status?:number;data:unknown;message?:string;}>(`/students/${id}`);
+    
+    if (!response.status) {
+      // If the student is not found, you can handle it here
+      if (response.status === 404) {
+        return { notFound: true }; // This will render the 404 page
+      }
+      throw new Error('Failed to fetch student data');
+    }
+
+    const student = await response.data;
+
+    return {
+      props: { student }, // Will be passed to the page component as props
+    };
+  } catch (error) {
+    console.error('Error fetching student data:', error);
+    return { props: { error: 'Failed to load student data' } };
+  }
+}
 export default StudentDetailsPage;

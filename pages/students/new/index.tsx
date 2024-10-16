@@ -1,14 +1,29 @@
-import AppLayout from '@/components/layouts/app-layout/app-layout'
-import PrimaryButton from '@/components/primary-button/primary-button';
-import Spacer from '@/components/spacer/spacer';
-import { add_student_schema} from '@/lib/validations';
-import { Flex, FormControl, FormLabel, FormErrorMessage,Text,Input } from '@chakra-ui/react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import React, { ReactElement } from 'react'
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import AppLayout from "@/components/layouts/app-layout/app-layout";
+import PrimaryButton from "@/components/primary-button/primary-button";
+import Spacer from "@/components/spacer/spacer";
+import Spinner from "@/components/spinner/spinner";
+import { useAddStudent } from "@/lib/hooks/api/mutations";
+import { errorToast, successToast } from "@/lib/utils";
+import { add_student_schema } from "@/lib/validations";
+import {
+  Flex,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  Text,
+  Input,
+} from "@chakra-ui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/router";
+import React, { ReactElement } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const AddStudentPage = () => {
+  const router = useRouter();
+  const { mutateAsync: addStudent, isPending: isPendingAddStudent } =
+    useAddStudent();
+
   const {
     register,
     handleSubmit,
@@ -24,9 +39,23 @@ const AddStudentPage = () => {
     resolver: zodResolver(add_student_schema),
   });
 
-
   const onSubmit = async (values: z.infer<typeof add_student_schema>) => {
-    console.log({ values },"add new student");
+    console.log({ values }, "add new student");
+    try {
+      const response = await addStudent(values);
+
+      // console.log({ response }, "ADD STUDENT");
+      if (response?.status) {
+        successToast(response?.message as string);
+        router.push("/students");
+      } else {
+        throw new Error("error adding student");
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.log({ error }, "addStudent error");
+      errorToast(error?.message ?? "An error occured");
+    }
   };
 
   return (
@@ -88,11 +117,9 @@ const AddStudentPage = () => {
             </FormErrorMessage>
           </FormControl>
           <FormControl isInvalid={!!errors.dob?.message}>
-            <FormLabel htmlFor="dob">
-              Date&nbsp;Of&nbsp;Birth
-            </FormLabel>
+            <FormLabel htmlFor="dob">Date&nbsp;Of&nbsp;Birth</FormLabel>
             <Input
-            type='date'
+              type="date"
               placeholder="Date Of Birth"
               // className="border-primary-blue-50"
               {...register("dob")}
@@ -103,17 +130,18 @@ const AddStudentPage = () => {
           </FormControl>
 
           <Flex className=" w-full justify-between items-center gap-4 ">
-            <PrimaryButton type="submit">Save</PrimaryButton>
+            <PrimaryButton type="submit" disabled={isPendingAddStudent}>
+              {isPendingAddStudent ? <Spinner /> : <span>Save</span>}
+            </PrimaryButton>
           </Flex>
         </Flex>
       </form>
     </section>
-  )
-}
+  );
+};
 
-AddStudentPage.getLayout = (page:ReactElement) => {
-  return <AppLayout pageName='Add New Student'>{page}</AppLayout>
-}
-
+AddStudentPage.getLayout = (page: ReactElement) => {
+  return <AppLayout pageName="Add New Student">{page}</AppLayout>;
+};
 
 export default AddStudentPage;

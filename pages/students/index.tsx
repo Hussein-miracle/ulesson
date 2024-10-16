@@ -1,6 +1,6 @@
 ("");
 import AppLayout from "@/components/layouts/app-layout/app-layout";
-import { Box, Flex, Wrap, Text } from "@chakra-ui/react";
+import { Box, Wrap, Text } from "@chakra-ui/react";
 import React, { ReactElement, useMemo, useState } from "react";
 import StudentItem, {
   StudentItemSkeleton,
@@ -54,7 +54,6 @@ const StudentPage = () => {
           <SearchIcon className=" select-none pointer-events-none absolute top-2.5 right-2" />
         </Box>
         <PrimaryButton
-          variant="grey"
           className="px-4 py-2 gap-2 rounded-xl"
           onClick={() => {
             router.push(`/students/new/`);

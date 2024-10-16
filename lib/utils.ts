@@ -48,3 +48,13 @@ export const validatePayload = (payload:object) => {
     return true;
   }
 };
+
+/**
+ * A function to sleep for a given time (milliseconds)
+ *
+ * @param {number} ms - The time to sleep in milliseconds
+ * @returns {void}
+ */
+export const sleep = async (ms:number):Promise<void> => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
