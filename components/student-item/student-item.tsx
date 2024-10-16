@@ -71,4 +71,54 @@ const StudentItem = ({ student }: StudentItemProps) => {
   );
 };
 
+export const StudentItemSkeleton = () => {
+  return (
+    <WrapItem className=" w-fit h-fit">
+      <Box
+        className=" border border-primary-blue-25 rounded-xl bg-white overflow-hidden"
+        h={"200px"}
+        w={"341px"}
+      >
+        <Box className=" h-14 w-full bg-gray-200 animate-pulse px-4 py-2.5 flex items-center justify-between border-b border-b-primary-blue-25">
+          <Flex className="flex items-center gap-4">
+            <Box
+              className=" rounded-full  bg-slate-300 "
+              h={"38px"}
+              w={"38px"}
+            />
+            <Text className="text-text-shade-75 font-medium text-base">
+              &nbsp;
+            </Text>
+          </Flex>
+
+          <Flex gap={1} alignItems={"center"}>
+          <Box className=" w-16 h-4 rounded-xl bg-gray-400 animate-pulse"/>
+            <Box className=" w-4 h-4 rounded-xl bg-gray-400 animate-pulse"/>
+          </Flex>
+        </Box>
+
+        <Box className=" h-full px-4 pt-3 pb-4 w-full flex flex-col gap-2">
+          <Flex className="flex items-center justify-between w-full">
+            <Box className=" w-16 h-5 rounded-xl bg-gray-200 animate-pulse"/>
+            <Box className=" w-36 h-5 rounded-xl bg-gray-200 animate-pulse"/>
+          </Flex>
+          <Flex className="flex items-center justify-between w-full">
+            <Box className=" w-24 h-5 rounded-xl bg-gray-200 animate-pulse"/>
+            <Box className=" w-36 h-5 rounded-xl bg-gray-200 animate-pulse"/>
+          </Flex>
+          <Flex className="flex items-center justify-between w-full">
+            <Box className=" w-20 h-5 rounded-xl bg-gray-200 animate-pulse"/>
+            <Box className=" w-36   h-5 rounded-xl bg-gray-200 animate-pulse"/>
+          </Flex>
+          <Flex className="flex items-center justify-between w-full">
+            <Box className=" w-24 h-5 rounded-xl bg-gray-200 animate-pulse"/>
+            <Box className=" w-32 h-5 rounded-xl bg-gray-200 animate-pulse"/>
+          </Flex>
+
+        </Box>
+      </Box>
+    </WrapItem>
+  );
+};
+
 export default StudentItem;

@@ -23,6 +23,12 @@ const StudentHeader = ({pageName}: StudentHeaderProps) => {
   };
   return (
     <header className="w-full h-[5.45rem] border border-primary-blue-25 border-solid rounded-xl py-5 px-6 bg-white flex flex-row items-center justify-between">
+      <div className="flex items-center gap-2">
+        <button className="lg:hidden bg-transparent outline-none border-none flex flex-col">
+         <span>--</span>
+         <span>--</span>
+        </button>
+
       <div className="h-full flex flex-col items-start justify-between">
         {pagename?.toLowerCase() !== "dashboard" && (
           <div
@@ -46,6 +52,8 @@ const StudentHeader = ({pageName}: StudentHeaderProps) => {
             Welcome back, Wahab
           </h2>
         )}
+      </div>
+
       </div>
 
       <div className="flex items-center gap-3 justify-between h-full">

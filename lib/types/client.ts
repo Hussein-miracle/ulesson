@@ -15,3 +15,8 @@ export interface Student{
 
 export type AddStudent = z.infer<typeof add_student_schema>;
 export type EditStudent = z.infer<typeof edit_student_schema>;
+export type ApiResponse<T = unknown> = {
+  data?:T;
+  message?:string;
+  status?:boolean;
+}
