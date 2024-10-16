@@ -31,7 +31,7 @@ const StudentPage = () => {
   return (
     <section className=" w-full min-h-screen border-primary-blue-25 bg-white rounded-xl p-6">
       <Box
-        className="w-full"
+        className="w-full  flex-wrap"
         display={"flex"}
         alignItems={"center"}
         justifyContent={"space-between"}

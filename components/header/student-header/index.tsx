@@ -39,7 +39,7 @@ const StudentHeader = ({ pageName }: StudentHeaderProps) => {
     <Fragment>
       <header className="w-full h-[5.45rem] border border-primary-blue-25 border-solid rounded-xl py-5 px-6 bg-white flex flex-row items-center justify-between">
         <div className="flex items-center gap-2">
-          <button className="lg:hidden bg-transparent outline-none border-none flex flex-col" ref={btnRef}>
+          <button className="lg:hidden bg-transparent outline-none border-none flex flex-col" ref={btnRef} onClick={handleToggle}>
             <MenuIcon />
           </button>
 
@@ -104,7 +104,7 @@ const StudentHeader = ({ pageName }: StudentHeaderProps) => {
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerBody>
-            <div className="flex grow flex-col gap-y-5 overflow-y-auto pl-6 pr-5 py-6 custom-scroller bg-white border-r border-primary-blue-25 border-solid">
+            <div className="flex grow flex-col gap-y-5 overflow-y-auto pl-6 pr-5 py-6 custom-scroll border-solid">
               <div className="flex h-[104px] w-full rounded-2xl shrink-0 items-center justify-center bg-background">
                 <span className=" text-xl">uLesson</span>
               </div>
@@ -119,6 +119,9 @@ const StudentHeader = ({ pageName }: StudentHeaderProps) => {
                         <li key={item.href}>
                           <Link
                             href={item.href}
+                            onClick={() => {
+                              handleToggle();
+                            }}
                             className={cn(
                               pathname.startsWith(item.href)
                                 ? "bg-primary-blue-100 text-neutral-white "
